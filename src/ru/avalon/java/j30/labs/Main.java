@@ -31,20 +31,28 @@ public class Main {
          * TODO #01 Подключите к проекту все библиотеки, необходимые для соединения с СУБД.
          */
         try (Connection connection = getConnection()) {
-            ProductCode code = new ProductCode("MO", 'N', "Movies");
+            ProductCode code = new ProductCode("M2", 'N', "Marat");
             code.save(connection);
             printAllCodes(connection);
-
-            //code.setCode("MV");
-            //code.save(connection);
-            //printAllCodes(connection);
+            
+            System.out.println("**************");
+            
+            code.setCode("SW");
+            code.save(connection);
+            printAllCodes(connection);
+            
+            System.out.println("**************");
+            
+            code.setDescription("m2descr");
+            code.save(connection);
+            printAllCodes(connection);
         }
         /*
          * TODO #14 Средствами отладчика проверьте корректность работы программы
          */
     }
     /**
-     * Выводит в кодсоль все коды товаров
+     * Выводит в консоль все коды товаров
      * 
      * @param connection действительное соединение с базой данных
      * @throws SQLException 

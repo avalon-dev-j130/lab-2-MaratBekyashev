@@ -16,25 +16,14 @@ import java.util.Objects;
  * @author Daniel Alpatov <danial.alpatov@gmail.com>
  */
 public class ProductCode {
-    /**
-     * Код товара
-     */
+    // Код товара
     private String code;
-    /**
-     * Кода скидки
-     */
+     // Кода скидки
     private char discountCode;
-    /**
-     * Описание
-     */
+    // Описание
     private String description;
-    /**
-     * Основной конструктор типа {@link ProductCode}
-     * 
-     * @param code код товара
-     * @param discountCode код скидки
-     * @param description описание 
-     */
+
+    // Основной конструктор типа {@link ProductCode} 
     public ProductCode(String code, char discountCode, String description) {
         this.code = code;
         this.discountCode = discountCode;
@@ -45,59 +34,34 @@ public class ProductCode {
      * 
      * @param set {@link ResultSet}, полученный в результате запроса, 
      * содержащего все поля таблицы PRODUCT_CODE базы данных Sample.
+     * TODO #05 реализуйте конструктор класса ProductCode     
      */
-    private ProductCode(ResultSet set) {
-        /*
-         * TODO #05 реализуйте конструктор класса ProductCode
-         */
-        throw new UnsupportedOperationException("Not implemented yet!");        
+    private ProductCode(ResultSet set) throws SQLException{
+        this(set.getString("prod_code"), 
+             set.getString("discount_code").charAt(0), 
+             set.getString("description"));    
     }
-    /**
-     * Возвращает код товара
-     * 
-     * @return Объект типа {@link String}
-     */
+    //Возвращает код товара * @return Объект типа {@link String}
     public String getCode() {
         return this.code;
     }
-    /**
-     * Устанавливает код товара
-     * 
-     * @param code код товара
-     */
+    // Устанавливает код товара @param code код товара
     public void setCode(String code) {
         this.code = code;
     }
-    
-    /**
-     * Возвращает код скидки
-     * 
-     * @return Объект типа {@link String}
-     */
+    // Возвращает код скидки @return Объект типа {@link String}
     public char getDiscountCode() {
         return this.discountCode;
     }
-    /**
-     * Устанавливает код скидки
-     * 
-     * @param discountCode код скидки
-     */
+    // Устанавливает код скидки @param discountCode код скидки
     public void setDiscountCode(char discountCode) {
         this.discountCode = discountCode;
     }
-    /**
-     * Возвращает описание
-     * 
-     * @return Объект типа {@link String}
-     */
+    // Возвращает описание * @return Объект типа {@link String}
     public String getDescription() {
         return description;
     }
-    /**
-     * Устанавливает описание
-     * 
-     * @param description описание
-     */
+    //Устанавливает описание * @param description описание
     public void setDescription(String description) {
         this.description = description;
     }
@@ -107,11 +71,11 @@ public class ProductCode {
      * @return Значение хеш-кода объекта типа {@link ProductCode}
      */
     @Override
+    /*
+    * TODO #06 Реализуйте метод hashCode
+    */
     public int hashCode() {
-        /*
-         * TODO #06 Реализуйте метод hashCode
-         */
-        return Objects.hash(this.code, this.discountCode, this.description);
+        return Objects.hash(this.code);
     }
     /**
      * Сравнивает некоторый произвольный объект с текущим объектом типа 
@@ -124,8 +88,7 @@ public class ProductCode {
      */
     @Override
     public boolean equals(Object obj) {
-        return this.code.equals(((ProductCode)obj).getCode()) &&
-               this.discountCode == ((ProductCode)obj).getDiscountCode();
+        return this.code.equals(((ProductCode)obj).getCode());
     }
     /**
      * Возвращает строковое представление кода товара.
@@ -183,11 +146,8 @@ public class ProductCode {
     public static Collection<ProductCode> convert(ResultSet set) throws SQLException {
         Collection<ProductCode> tmpList = new LinkedList<>();
         while (set.next()) {
-            ProductCode item = new ProductCode(set.getString("prod_code"), 
-                                               set.getString("discount_code").charAt(0), 
-                                               set.getString("description"));
+            ProductCode item = new ProductCode(set);
             tmpList.add(item);
-        
         }
         return new ArrayList<>(tmpList);
     }
@@ -205,21 +165,20 @@ public class ProductCode {
         PreparedStatement stmt;
         Collection<ProductCode> allItems = all(connection);
         if (allItems.contains(this)) {
-          // update
+          // String query = "update product_code set discount_code = ?, description = ? where prod_code= ?";
           stmt = getUpdateQuery(connection);
-          stmt.setString(1, this.code);
-          stmt.setString(2, Character.toString(this.discountCode));
-          stmt.setString(3, this.description);
+          stmt.setString(1, Character.toString(this.discountCode));
+          stmt.setString(2, this.description);
+          stmt.setString(3, this.code);
           stmt.execute();
         }
         else {
-          // insert   
+          // String query = "insert into product_code(prod_code, discount_code, description) values (?,?,?)";
           stmt = getInsertQuery(connection);
           stmt.setString(1, this.code);
           stmt.setString(2, Character.toString(this.discountCode));
           stmt.setString(3, this.description);
           stmt.execute();
-
         };
     }
     /**
